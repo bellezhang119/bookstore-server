@@ -38,12 +38,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
-app.post("/auth/register", register);
-app.post("/orders", verifyToken, createOrder)
+app.post("/api/auth/register", register);
+app.post("/api/orders", verifyToken, createOrder);
 
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/orders", orderRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
 
 
 // Mongoose setup

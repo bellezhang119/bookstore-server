@@ -38,6 +38,14 @@ const UserSchema = new mongoose.Schema(
       required: true,
       max: 100,
     },
+    cart: {
+      type: Array,
+      default: [],
+    },
+    wishlist: {
+      type: Array,
+      default: [],
+    },
   },
   { timestamps: true }
 );
