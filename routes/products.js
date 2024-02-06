@@ -5,4 +5,6 @@ const router = express.Router();
 
 // Read
 router.get("/", getProducts);
+router.get("/:id", getProduct);
 
+export default router;

@@ -4,9 +4,25 @@ import bcrypt from "bcrypt";
 // Read
 export const getUser = async (req, res) => {
   try {
-    const { _id } = req.params;
-    const user = await User.findById(_id);
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
     res.status(200).json(user);
+  } catch (err) {
+    res.status(404).json({ msg: err.message });
+  }
+};
+
+export const getUserOrders = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    const userOrders = await Order.find({ userId: user._id });
+    res.status(200).json({ userOrders });
   } catch (err) {
     res.status(404).json({ msg: err.message });
   }
@@ -54,15 +70,15 @@ export const updatePassword = async (req, res) => {
     const newPasswordHash = await bcrypt.hash(newPassword, salt);
 
     const updatedUser = await User.findByIdAndUpdate(
-        _id,
-        { password: newPasswordHash },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
+      _id,
+      { password: newPasswordHash },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-    res.status(200).json({ msg: "Password updated successfully "});
+    res.status(200).json({ msg: "Password updated successfully " });
   } catch (err) {
     res.status(404).json({ msg: err.message });
   }

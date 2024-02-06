@@ -12,3 +12,5 @@ router.get("/:id", verifyToken, getOrder);
 
 // Update
 router.patch("/:id", verifyToken, updateOrder);
+
+export default router;

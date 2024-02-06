@@ -19,6 +19,9 @@ const ProductSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    description: {
+        type: String,
+    },
     authorList: {
       type: Array,
       default: [],

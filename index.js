@@ -8,10 +8,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-import authRoutes from "./routes/auth.js";
 import { register } from "./controllers/auth.js";
+import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
-import { createOrder} from "./controller/orders.js";
+import orderRoutes from "./routes/orders.js";
+import productRoutes from "./routes/products.js";
+import authorRoutes from "./routes/authors.js";
 
 // Configurations
 const __filename = fileURLToPath(import.meta.url);
@@ -39,11 +41,12 @@ const upload = multer({ storage });
 
 // Routes
 app.post("/api/auth/register", register);
-app.post("/api/orders", verifyToken, createOrder);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
+api.use("/api/products", productRoutes);
+api.use("/api/authors", authorRoutes);
 
 
 // Mongoose setup

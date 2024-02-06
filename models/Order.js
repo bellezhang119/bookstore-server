@@ -7,10 +7,18 @@ const OrderSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    productList: {
-      type: Array,
-      default: [],
-    },
+    productList: [
+      {
+        productId: {
+          type: String,
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
     orderDate: {
       type: Date,
       required: true,
@@ -34,6 +42,16 @@ const OrderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+OrderSchema.pre("save", async function (next) {
+  const lastOrder = await Order.findOne({}, {}, { sort: { _id: -1 } });
+  const nextOrderNumber = lastOrder
+    ? String(Number(lastOrder.orderNumber) + 1).padStart(6, "0")
+    : "000001";
+
+  this.orderNumber = nextOrderNumber;
+  next();
+});
 
 const Order = mongoose.model("Order", OrderSchema);
 export default Order;
