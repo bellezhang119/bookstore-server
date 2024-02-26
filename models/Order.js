@@ -4,8 +4,6 @@ const OrderSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
-      required: true,
-      unique: true,
     },
     productList: [
       {
@@ -46,10 +44,10 @@ const OrderSchema = new mongoose.Schema(
 OrderSchema.pre("save", async function (next) {
   const lastOrder = await Order.findOne({}, {}, { sort: { _id: -1 } });
   const nextOrderNumber = lastOrder
-    ? String(Number(lastOrder.orderNumber) + 1).padStart(6, "0")
+    ? String(Number(lastOrder._id) + 1).padStart(6, "0")
     : "000001";
 
-  this.orderNumber = nextOrderNumber;
+  this._id = nextOrderNumber;
   next();
 });
 

@@ -4,8 +4,6 @@ const ProductSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
-      required: true,
-      unique: true,
     },
     productName: {
       type: String,
@@ -29,17 +27,23 @@ const ProductSchema = new mongoose.Schema(
     categoryList: {
       type: [String],
       enum: [
+        "Drama",
+        "Horror",
+        "Thriller",
         "Fiction",
-        "Non-Fiction",
-        "Mystery",
-        "Romance",
+        "Classic",
         "Science Fiction",
+        "Dystopian",
+        "Satire",
+        "Political Allegory",
+        "Mystery",
+        "Detective",
+        "Romance",
+        "Adventure",
+        "Historical Fiction",
         "Fantasy",
-        "Biography",
-        "Self-Help",
-        "Poetry",
-        "History",
-        "Other",
+        "Young Adult",
+        "Non-Fiction",
       ],
     },
     picturePath: {

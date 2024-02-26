@@ -14,6 +14,7 @@ import userRoutes from "./routes/users.js";
 import orderRoutes from "./routes/orders.js";
 import productRoutes from "./routes/products.js";
 import authorRoutes from "./routes/authors.js";
+import { insertData } from "./data/index.js";
 
 // Configurations
 const __filename = fileURLToPath(import.meta.url);
@@ -45,8 +46,8 @@ app.post("/api/auth/register", register);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
-api.use("/api/products", productRoutes);
-api.use("/api/authors", authorRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/authors", authorRoutes);
 
 
 // Mongoose setup

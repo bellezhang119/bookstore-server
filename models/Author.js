@@ -4,15 +4,13 @@ const AuthorSchema = new mongoose.Schema(
     {
         _id: {
             type: String,
-            required: true,
-            unique: true,
         },
         authorName: {
             type: String,
             required: true,
         },
         biography: {
-            type: String.
+            type: String,
         },
     },
     { timestamps: true }
