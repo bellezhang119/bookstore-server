@@ -42,13 +42,23 @@ const OrderSchema = new mongoose.Schema(
 );
 
 OrderSchema.pre("save", async function (next) {
-  const lastOrder = await Order.findOne({}, {}, { sort: { _id: -1 } });
-  const nextOrderNumber = lastOrder
-    ? String(Number(lastOrder._id) + 1).padStart(6, "0")
-    : "000001";
+  try {
+    const lastOrder = await Order.findOne({}, {}, { sort: { _id: -1 } });
+    let nextOrderId;
 
-  this._id = nextOrderNumber;
-  next();
+    if (lastOrder) {
+      const lastOrderIdNumeric = parseInt(lastOrder._id.slice(2), 10); // Extract numeric part
+      const nextOrderIdNumeric = lastOrderIdNumeric + 1;
+      nextOrderId = "nz" + String(nextOrderIdNumeric).padStart(6, "0");
+    } else {
+      nextOrderId = "nz000001";
+    }
+
+    this._id = nextOrderId;
+    next();
+  } catch (err) {
+    next(err); // Pass any errors to the next middleware
+  }
 });
 
 const Order = mongoose.model("Order", OrderSchema);

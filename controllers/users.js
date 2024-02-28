@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Product from "../models/Product.js";
 import bcrypt from "bcrypt";
 
 // Read
@@ -31,10 +32,10 @@ export const getUserOrders = async (req, res) => {
 // Update
 export const updateUser = async (req, res) => {
   try {
-    const { _id, firstName, lastName, phoneNumber, birthday } = req.body;
+    const { id, firstName, lastName, phoneNumber, birthday } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
-      _id,
+      id,
       { firstName, lastName, phoneNumber, birthday },
       {
         new: true,
@@ -54,9 +55,9 @@ export const updateUser = async (req, res) => {
 
 export const updatePassword = async (req, res) => {
   try {
-    const _id = req.params._id;
+    const id = req.params.id;
     const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(_id);
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
@@ -81,5 +82,77 @@ export const updatePassword = async (req, res) => {
     res.status(200).json({ msg: "Password updated successfully " });
   } catch (err) {
     res.status(404).json({ msg: err.message });
+  }
+};
+
+export const addRemoveDeleteCart = async (req, res) => {
+  try {
+    const { id, productId } = req.params;
+    const { action } = req.body;
+    const user = await User.findById(id);
+
+    const index = user.cart.findIndex((item) => item.productId === productId);
+
+    if (action === "add") {
+      if (index !== -1) {
+        user.cart[index].quantity++;
+      } else {
+        user.cart.push({ productId, quantity: 1 });
+      }
+    } else if (action === "remove" && index !== -1) {
+      if (user.cart[index].quantity > 1) {
+        user.cart[index].quantity--;
+      } else {
+        user.cart.splice(index, 1);
+      }
+    } else if (action === "delete" && index !== -1) {
+      user.cart.splice(index, 1);
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Item does not exist in the cart" });
+    }
+
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export const addRemoveDeleteWishlist = async (req, res) => {
+  try {
+    const { id, productId } = req.params;
+    const { action } = req.body;
+    const user = await User.findById(id);
+
+    const index = user.wishlist.findIndex((item) => item.productId === productId);
+
+    if (action === "add") {
+      if (index !== -1) {
+        user.wishlist[index].quantity++;
+      } else {
+        user.wishlist.push({ productId, quantity: 1 });
+      }
+    } else if (action === "remove" && index !== -1) {
+      if (user.wishlist[index].quantity > 1) {
+        user.wishlist[index].quantity--;
+      } else {
+        user.wishlist.splice(index, 1);
+      }
+    } else if (action === "delete" && index !== -1) {
+      user.wishlist.splice(index, 1);
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Item does not exist in the wishlist" });
+    }
+
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
   }
 };

@@ -65,13 +65,23 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.pre("save", async function (next) {
-  const lastUser = await User.findOne({}, {}, { sort: { _id: -1 } });
-  const nextUserId = lastUser
-    ? "nz" + String(Number(lastUser._id) + 1).padStart(6, "0")
-    : "nz000001";
+  try {
+    const lastUser = await User.findOne({}, {}, { sort: { _id: -1 } });
+    let nextUserId;
 
-  this._id = nextUserId;
-  next();
+    if (lastUser) {
+      const lastUserIdNumeric = parseInt(lastUser._id.slice(2), 10); // Extract numeric part
+      const nextUserIdNumeric = lastUserIdNumeric + 1;
+      nextUserId = "nz" + String(nextUserIdNumeric).padStart(6, "0");
+    } else {
+      nextUserId = "nz000001";
+    }
+
+    this._id = nextUserId;
+    next();
+  } catch (err) {
+    next(err); // Pass any errors to the next middleware
+  }
 });
 
 const User = mongoose.model("User", UserSchema);
