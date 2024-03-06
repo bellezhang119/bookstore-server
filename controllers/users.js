@@ -93,24 +93,36 @@ export const addRemoveDeleteCart = async (req, res) => {
 
     const index = user.cart.findIndex((item) => item.productId === productId);
 
-    if (action === "add") {
-      if (index !== -1) {
-        user.cart[index].quantity++;
-      } else {
-        user.cart.push({ productId, quantity: 1 });
-      }
-    } else if (action === "remove" && index !== -1) {
-      if (user.cart[index].quantity > 1) {
-        user.cart[index].quantity--;
-      } else {
-        user.cart.splice(index, 1);
-      }
-    } else if (action === "delete" && index !== -1) {
-      user.cart.splice(index, 1);
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Item does not exist in the cart" });
+    switch (action) {
+      case "add":
+        if (index !== -1) {
+          user.cart[index].quantity++;
+        } else {
+          user.cart.push({ productId, quantity: 1 });
+        }
+        break;
+      case "remove":
+        if (index !== -1) {
+          if (user.cart[index].quantity > 1) {
+            user.cart[index].quantity--;
+          } else {
+            user.cart.splice(index, 1);
+          }
+        } else {
+          return res
+            .status(400)
+            .json({ message: "Item does not exist in the cart" });
+        }
+        break;
+      case "delete":
+        if (index !== -1) {
+          user.cart.splice(index, 1);
+        } else {
+          return res
+            .status(400)
+            .json({ message: "Item does not exist in the cart" });
+        }
+        break;
     }
 
     const updatedUser = await user.save();
@@ -127,26 +139,40 @@ export const addRemoveDeleteWishlist = async (req, res) => {
     const { action } = req.body;
     const user = await User.findById(id);
 
-    const index = user.wishlist.findIndex((item) => item.productId === productId);
+    const index = user.wishlist.findIndex(
+      (item) => item.productId === productId
+    );
 
-    if (action === "add") {
-      if (index !== -1) {
-        user.wishlist[index].quantity++;
-      } else {
-        user.wishlist.push({ productId, quantity: 1 });
-      }
-    } else if (action === "remove" && index !== -1) {
-      if (user.wishlist[index].quantity > 1) {
-        user.wishlist[index].quantity--;
-      } else {
-        user.wishlist.splice(index, 1);
-      }
-    } else if (action === "delete" && index !== -1) {
-      user.wishlist.splice(index, 1);
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Item does not exist in the wishlist" });
+    switch (action) {
+      case "add":
+        if (index !== -1) {
+          user.wishlist[index].quantity++;
+        } else {
+          user.wishlist.push({ productId, quantity: 1 });
+        }
+        break;
+      case "remove":
+        if (index !== -1) {
+          if (user.wishlist[index].quantity > 1) {
+            user.wishlist[index].quantity--;
+          } else {
+            user.wishlist.splice(index, 1);
+          }
+        } else {
+          return res
+            .status(400)
+            .json({ message: "Item does not exist in the wishlist" });
+        }
+        break;
+      case "delete":
+        if (index !== -1) {
+          user.wishlist.splice(index, 1);
+        } else {
+          return res
+            .status(400)
+            .json({ message: "Item does not exist in the wishlist" });
+        }
+        break;
     }
 
     const updatedUser = await user.save();
