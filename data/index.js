@@ -77,6 +77,7 @@ export async function insertData() {
         description:
           "A horror novel about a group of friends who confront a shape-shifting entity that terrorizes their town.",
         authorList: ["sk21091947"],
+        authorNames: ["Stephen King"],
         categoryList: ["Horror", "Thriller"],
         picturePath: "sk000001.jpeg",
       },
@@ -88,6 +89,7 @@ export async function insertData() {
         description:
           "A psychological horror novel about an aspiring writer and his family who become caretakers of an isolated hotel, where supernatural forces wreak havoc.",
         authorList: ["sk21091947"],
+        authorNames: ["Stephen King"],
         categoryList: ["Horror", "Thriller"],
         picturePath: "sk000002.jpeg",
       },
@@ -99,6 +101,7 @@ export async function insertData() {
         description:
           "A psychological thriller about an author held captive by his 'number one fan' after a car accident.",
         authorList: ["sk21091947"],
+        authorNames: ["Stephen King"],
         categoryList: ["Thriller", "Horror"],
         picturePath: "sk000003.jpeg",
       },
@@ -110,6 +113,7 @@ export async function insertData() {
         description:
           "A supernatural horror novel about a teenage girl with telekinetic powers who seeks revenge on her abusive peers.",
         authorList: ["sk21091947"],
+        authorNames: ["Stephen King"],
         categoryList: ["Horror", "Drama"],
         picturePath: "sk000004.jpeg",
       },
@@ -121,6 +125,7 @@ export async function insertData() {
         description:
           "A horror novel about a family who discovers a burial ground in the woods behind their new home, with sinister consequences.",
         authorList: ["sk21091947"],
+        authorNames: ["Stephen King"],
         categoryList: ["Horror", "Thriller"],
         picturePath: "sk000005.jpeg",
       },
@@ -132,6 +137,7 @@ export async function insertData() {
         description:
           "A coming-of-age novel set in the American South during the 1930s, addressing racial injustice and moral growth.",
         authorList: ["hl28041926"],
+        authorNames: ["Harper Lee"],
         categoryList: ["Fiction", "Classic"],
         picturePath: "hl000001.jpeg",
       },
@@ -143,6 +149,7 @@ export async function insertData() {
         description:
           "A dystopian novel set in a totalitarian society where individuality is suppressed and perpetual war is used to control the populace.",
         authorList: ["go25061903"],
+        authorNames: ["George Orwell"],
         categoryList: ["Science Fiction", "Dystopian"],
         picturePath: "go000001.jpeg",
       },
@@ -154,6 +161,7 @@ export async function insertData() {
         description:
           "An allegorical novella that satirizes the events leading up to the Russian Revolution and the Stalinist era of the Soviet Union.",
         authorList: ["go25061903"],
+        authorNames: ["George Orwell"],
         categoryList: ["Satire", "Political Allegory"],
         picturePath: "go000002.jpeg",
       },
@@ -165,6 +173,7 @@ export async function insertData() {
         description:
           "A detective novel featuring the famous Belgian detective Hercule Poirot, who investigates a murder on a luxurious train.",
         authorList: ["ac15091990"],
+        authorNames: ["Agatha Christie"],
         categoryList: ["Mystery", "Detective"],
         picturePath: "ac000001.jpeg",
       },
@@ -176,6 +185,7 @@ export async function insertData() {
         description:
           "A mystery novel about ten strangers who are invited to an isolated island and are murdered one by one, following a nursery rhyme.",
         authorList: ["ac15091990"],
+        authorNames: ["Agatha Christie"],
         categoryList: ["Mystery", "Thriller"],
         picturePath: "ac000002.jpeg",
       },
@@ -187,6 +197,7 @@ export async function insertData() {
         description:
           "A landmark novel in magical realism, chronicling the Buendía family's rise and fall in the fictional town of Macondo.",
         authorList: ["gg06031927"],
+        authorNames: ["Gabriel García Márquez"],
         categoryList: ["Fiction", "Classic"],
         picturePath: "gg000001.jpeg",
       },
@@ -198,6 +209,7 @@ export async function insertData() {
         description:
           "A love story set in Colombia, exploring themes of love, aging, and the passage of time.",
         authorList: ["gg06031927"],
+        authorNames: ["Gabriel García Márquez"],
         categoryList: ["Romance", "Fiction"],
         picturePath: "gg000002.jpeg",
       },
@@ -209,6 +221,7 @@ export async function insertData() {
         description:
           "A romantic novel featuring Elizabeth Bennet and Mr. Darcy, exploring themes of love, marriage, and social status.",
         authorList: ["ja16121775"],
+        authorNames: ["Jane Austen"],
         categoryList: ["Romance", "Classic"],
         picturePath: "ja000001.jpeg",
       },
@@ -220,6 +233,7 @@ export async function insertData() {
         description:
           "A novella about an aging Cuban fisherman, Santiago, and his battle with a giant marlin in the Gulf Stream.",
         authorList: ["eh21071899"],
+        authorNames: ["Ernest Hemingway"],
         categoryList: ["Fiction", "Adventure"],
         picturePath: "eh000001.jpeg",
       },
@@ -231,6 +245,7 @@ export async function insertData() {
         description:
           "A novel inspired by the story of Margaret Garner, an African-American slave who escaped slavery in Kentucky.",
         authorList: ["tm18021931"],
+        authorNames: ["Toni Morrison"],
         categoryList: ["Historical Fiction"],
         picturePath: "tm000001.jpeg",
       },
@@ -242,6 +257,7 @@ export async function insertData() {
         description:
           "A coming-of-age novel set in Michigan, exploring themes of identity, family, and African-American folklore.",
         authorList: ["tm18021931"],
+        authorNames: ["Toni Morrison"],
         categoryList: ["Fiction"],
         picturePath: "tm000002.jpeg",
       },
@@ -253,6 +269,7 @@ export async function insertData() {
         description:
           "A novel set in the Jazz Age, following the enigmatic millionaire Jay Gatsby and his obsession with the beautiful Daisy Buchanan.",
         authorList: ["ff24091896"],
+        authorNames: ["F. Scott Fitzgerald"],
         categoryList: ["Classic", "Fiction"],
         picturePath: "ff000001.jpeg",
       },
@@ -264,6 +281,7 @@ export async function insertData() {
         description:
           "The first book in the Harry Potter series, following the young wizard Harry Potter as he discovers his magical heritage.",
         authorList: ["jr31071965"],
+        authorNames: ["J.K. Rowling"],
         categoryList: ["Fantasy", "Young Adult"],
         picturePath: "jk000001.jpeg",
       },
@@ -275,6 +293,7 @@ export async function insertData() {
         description:
           "The second book in the Harry Potter series, where Harry returns to Hogwarts and uncovers the mystery of the Chamber of Secrets.",
         authorList: ["jr31071965"],
+        authorNames: ["J.K. Rowling"],
         categoryList: ["Fantasy", "Young Adult"],
         picturePath: "jk000002.jpeg",
       },
@@ -286,6 +305,7 @@ export async function insertData() {
         description:
           "The third book in the Harry Potter series, where Harry learns about his godfather, Sirius Black, and confronts the Dementors.",
         authorList: ["jr31071965"],
+        authorNames: ["J.K. Rowling"],
         categoryList: ["Fantasy", "Young Adult"],
         picturePath: "jk000003.jpeg",
       },
@@ -297,6 +317,7 @@ export async function insertData() {
         description:
           "The fourth book in the Harry Potter series, where Harry competes in the Triwizard Tournament and faces Lord Voldemort's return.",
         authorList: ["jr31071965"],
+        authorNames: ["J.K. Rowling"],
         categoryList: ["Fantasy", "Young Adult"],
         picturePath: "jk000004.jpeg",
       },
@@ -308,6 +329,7 @@ export async function insertData() {
         description:
           "The fifth book in the Harry Potter series, where Harry forms Dumbledore's Army and battles the oppressive Ministry of Magic.",
         authorList: ["jr31071965"],
+        authorNames: ["J.K. Rowling"],
         categoryList: ["Fantasy", "Young Adult"],
         picturePath: "jk000005.jpeg",
       },
@@ -319,6 +341,7 @@ export async function insertData() {
         description:
           "The sixth book in the Harry Potter series, where Harry learns about Voldemort's Horcruxes and prepares for the final battle.",
         authorList: ["jr31071965"],
+        authorNames: ["J.K. Rowling"],
         categoryList: ["Fantasy", "Young Adult"],
         picturePath: "jk000006.jpeg",
       },
@@ -330,6 +353,7 @@ export async function insertData() {
         description:
           "The seventh and final book in the Harry Potter series, where Harry confronts Voldemort for the last time in the Battle of Hogwarts.",
         authorList: ["jr31071965"],
+        authorNames: ["J.K. Rowling"],
         categoryList: ["Fantasy", "Young Adult"],
         picturePath: "jk000007.jpeg",
       },

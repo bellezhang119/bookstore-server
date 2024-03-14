@@ -24,6 +24,10 @@ const ProductSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    authorNames: {
+      type: Array,
+      default: [],
+    },
     categoryList: {
       type: [String],
       enum: [
