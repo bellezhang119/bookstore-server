@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import bcrypt from "bcrypt";
 
@@ -71,7 +72,7 @@ export const updatePassword = async (req, res) => {
     const newPasswordHash = await bcrypt.hash(newPassword, salt);
 
     const updatedUser = await User.findByIdAndUpdate(
-      _id,
+      id,
       { password: newPasswordHash },
       {
         new: true,
@@ -103,8 +104,9 @@ export const addToCart = async (req, res) => {
         { $push: { cart: { productId, quantity: 1 } } },
         { new: true }
       );
-      console.log("New item added to cart");
       return res.status(200).json(newUser);
+    } else {
+      return res.status(200).json(updatedUser);
     }
   } catch (err) {
     res.status(404).json({ message: err.message });
@@ -136,14 +138,13 @@ export const removeFromCart = async (req, res) => {
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User or cart item not found" });
+    } else {
+      res.status(200).json(updatedUser);
     }
-
-    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 export const deleteFromCart = async (req, res) => {
   try {
@@ -158,9 +159,9 @@ export const deleteFromCart = async (req, res) => {
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
+    } else {
+      res.status(200).json(updatedUser);
     }
-
-    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -185,12 +186,10 @@ export const addToWishlist = async (req, res) => {
         { $push: { wishlist: { productId, quantity: 1 } } },
         { new: true }
       );
-      console.log("New item added to wishlist");
       return res.status(200).json(newUser);
+    } else {
+      res.status(200).json(updatedUser);
     }
-
-    console.log("Quantity incremented");
-    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -220,15 +219,16 @@ export const removeFromWishlist = async (req, res) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: "User or wishlist item not found" });
+      return res
+        .status(404)
+        .json({ message: "User or wishlist item not found" });
+    } else {
+      res.status(200).json(updatedUser);
     }
-
-    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 export const deleteFromWishlist = async (req, res) => {
   try {
@@ -243,9 +243,9 @@ export const deleteFromWishlist = async (req, res) => {
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
+    } else {
+      res.status(200).json(updatedUser);
     }
-
-    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
