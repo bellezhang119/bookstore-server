@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 // Read
 export const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params._id);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
@@ -18,7 +18,7 @@ export const getUser = async (req, res) => {
 
 export const getUserOrders = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params._id);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
@@ -33,10 +33,10 @@ export const getUserOrders = async (req, res) => {
 // Update
 export const updateUser = async (req, res) => {
   try {
-    const { id, firstName, lastName, phoneNumber, birthday } = req.body;
+    const { _id, firstName, lastName, phoneNumber, birthday } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
-      id,
+      _id,
       { firstName, lastName, phoneNumber, birthday },
       {
         new: true,
@@ -56,9 +56,9 @@ export const updateUser = async (req, res) => {
 
 export const updatePassword = async (req, res) => {
   try {
-    const id = req.params.id;
+    const _id = req.params._id;
     const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(id);
+    const user = await User.findById(_id);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
@@ -72,7 +72,7 @@ export const updatePassword = async (req, res) => {
     const newPasswordHash = await bcrypt.hash(newPassword, salt);
 
     const updatedUser = await User.findByIdAndUpdate(
-      id,
+      _id,
       { password: newPasswordHash },
       {
         new: true,
@@ -86,13 +86,43 @@ export const updatePassword = async (req, res) => {
   }
 };
 
+export const getUserCart = async (req, res) => {
+  try {
+    const userId = req.params._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const cartItems = user.cart;
+
+    const productDetailsPromises = cartItems.map(async (item) => {
+      const product = await Product.findById(item.productId);
+      return {
+        product,
+        quantity: item.quantity,
+      };
+    });
+
+    const cartDetails = await Promise.all(productDetailsPromises);
+
+    res.status(200).json(cartDetails);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const addToCart = async (req, res) => {
   try {
-    const { id, productId } = req.params;
+    const { _id, productId } = req.params;
+    console.log(_id);
+    console.log(productId);
 
     // Find the user and update the cart
     const updatedUser = await User.findOneAndUpdate(
-      { _id: id, "cart.productId": productId }, // Find user with given ID and matching cart item
+      { _id: _id, "cart.productId": productId }, // Find user with given ID and matching cart item
       { $inc: { "cart.$.quantity": 1 } }, // Increment quantity if cart item exists
       { new: true } // Return the modified user document
     );
@@ -100,7 +130,7 @@ export const addToCart = async (req, res) => {
     if (!updatedUser) {
       // If user is not found or cart item does not exist, add a new item to cart
       const newUser = await User.findByIdAndUpdate(
-        id,
+        _id,
         { $push: { cart: { productId, quantity: 1 } } },
         { new: true }
       );
@@ -115,44 +145,49 @@ export const addToCart = async (req, res) => {
 
 export const removeFromCart = async (req, res) => {
   try {
-    const { id, productId } = req.params;
+    const { _id, productId } = req.params;
 
-    // Find the user and update the cart
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: id, "cart.productId": productId }, // Find user with given ID and matching cart item
-      [
-        {
-          $set: {
-            "cart.$[element].quantity": {
-              $cond: {
-                if: { $eq: ["$cart.quantity", 1] }, // If quantity is 1
-                then: 0, // Set quantity to 0 (remove item from cart)
-                else: { $subtract: ["$cart.quantity", 1] }, // Decrease quantity by 1
-              },
-            },
-          },
-        },
-      ],
-      { arrayFilters: [{ "element.productId": productId }], new: true } // Return the modified user document
-    );
-
-    if (!updatedUser) {
+    // Find the user and check if the product is in the cart
+    const user = await User.findOne({ _id, "cart.productId": productId });
+    if (!user) {
       return res.status(404).json({ message: "User or cart item not found" });
-    } else {
-      res.status(200).json(updatedUser);
     }
+
+    // Find the cart item and its quantity
+    const cartItem = user.cart.find(item => item.productId.toString() === productId);
+    if (!cartItem) {
+      return res.status(404).json({ message: "Cart item not found" });
+    }
+
+    if (cartItem.quantity === 1) {
+      // Remove the item from the cart if the quantity is 1
+      await User.updateOne(
+        { _id },
+        { $pull: { cart: { productId } } }
+      );
+    } else {
+      // Decrement the quantity of the cart item
+      await User.updateOne(
+        { _id, "cart.productId": productId },
+        { $inc: { "cart.$.quantity": -1 } }
+      );
+    }
+
+    const updatedUser = await User.findById(_id); // Get the updated user document
+    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+
 export const deleteFromCart = async (req, res) => {
   try {
-    const { id, productId } = req.params;
+    const { _id, productId } = req.params;
 
     // Find the user and update the cart
     const updatedUser = await User.findOneAndUpdate(
-      { _id: id },
+      { _id: _id },
       { $pull: { cart: { productId: productId } } }, // Remove item from cart based on productId
       { new: true } // Return the modified user document
     );
@@ -169,12 +204,12 @@ export const deleteFromCart = async (req, res) => {
 
 export const addToWishlist = async (req, res) => {
   try {
-    const { id, productId } = req.params;
-    const user = await User.findById(id);
+    const { _id, productId } = req.params;
+    const user = await User.findById(_id);
 
     // Find the user and update the wishlist
     const updatedUser = await User.findOneAndUpdate(
-      { _id: id, "wishlist.productId": productId }, // Find user with given ID and matching wishlist item
+      { _id: _id, "wishlist.productId": productId }, // Find user with given ID and matching wishlist item
       { $inc: { "wishlist.$.quantity": 1 } }, // Increment quantity if wishlist item exists
       { new: true } // Return the modified user document
     );
@@ -182,7 +217,7 @@ export const addToWishlist = async (req, res) => {
     if (!updatedUser) {
       // If user is not found or wishlist item does not exist, add a new item to wishlist
       const newUser = await User.findByIdAndUpdate(
-        id,
+        _id,
         { $push: { wishlist: { productId, quantity: 1 } } },
         { new: true }
       );
@@ -197,34 +232,36 @@ export const addToWishlist = async (req, res) => {
 
 export const removeFromWishlist = async (req, res) => {
   try {
-    const { id, productId } = req.params;
+    const { _id, productId } = req.params;
 
-    // Find the user and update the wishlist
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: id, "wishlist.productId": productId }, // Find user with given ID and matching wishlist item
-      [
-        {
-          $set: {
-            "wishlist.$[element].quantity": {
-              $cond: {
-                if: { $eq: ["$wishlist.quantity", 1] }, // If quantity is 1
-                then: 0, // Set quantity to 0 (remove item from wishlist)
-                else: { $subtract: ["$wishlist.quantity", 1] }, // Decrease quantity by 1
-              },
-            },
-          },
-        },
-      ],
-      { arrayFilters: [{ "element.productId": productId }], new: true } // Return the modified user document
-    );
-
-    if (!updatedUser) {
-      return res
-        .status(404)
-        .json({ message: "User or wishlist item not found" });
-    } else {
-      res.status(200).json(updatedUser);
+    // Find the user and check if the product is in the wishlist
+    const user = await User.findOne({ _id, "wishlist.productId": productId });
+    if (!user) {
+      return res.status(404).json({ message: "User or wishlist item not found" });
     }
+
+    // Find the wishlist item and its quantity
+    const wishlistItem = user.wishlist.find(item => item.productId.toString() === productId);
+    if (!wishlistItem) {
+      return res.status(404).json({ message: "Wishlist item not found" });
+    }
+
+    if (wishlistItem.quantity === 1) {
+      // Remove the item from the wishlist if the quantity is 1
+      await User.updateOne(
+        { _id },
+        { $pull: { wishlist: { productId } } }
+      );
+    } else {
+      // Decrement the quantity of the wishlist item
+      await User.updateOne(
+        { _id, "wishlist.productId": productId },
+        { $inc: { "wishlist.$.quantity": -1 } }
+      );
+    }
+
+    const updatedUser = await User.findById(_id); // Get the updated user document
+    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -232,11 +269,11 @@ export const removeFromWishlist = async (req, res) => {
 
 export const deleteFromWishlist = async (req, res) => {
   try {
-    const { id, productId } = req.params;
+    const { _id, productId } = req.params;
 
     // Find the user and update the wishlist
     const updatedUser = await User.findOneAndUpdate(
-      { _id: id },
+      { _id: _id },
       { $pull: { wishlist: { productId: productId } } }, // Remove item from wishlist based on productId
       { new: true } // Return the modified user document
     );
