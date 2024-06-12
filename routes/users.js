@@ -7,6 +7,7 @@ import {
   addToCart,
   removeFromCart,
   deleteFromCart,
+  getUserWishlist,
   addToWishlist,
   removeFromWishlist,
   deleteFromWishlist,
@@ -19,6 +20,7 @@ const router = express.Router();
 router.get("/:_id", verifyToken, getUser);
 router.get("/:_id/orders", verifyToken, getUserOrders);
 router.get("/:_id/cart", verifyToken, getUserCart);
+router.get("/:_id/wishlist", verifyToken, getUserWishlist);
 
 // Update
 router.patch("/:_id", verifyToken, updateUser);

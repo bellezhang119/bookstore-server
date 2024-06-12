@@ -202,6 +202,34 @@ export const deleteFromCart = async (req, res) => {
   }
 };
 
+export const getUserWishlist = async (req, res) => {
+  try {
+    const userId = req.params._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const wishlistItems = user.wishlist;
+
+    const productDetailsPromises = wishlistItems.map(async (item) => {
+      const product = await Product.findById(item.productId);
+      return {
+        product,
+        quantity: item.quantity,
+      };
+    });
+
+    const wishlistDetails = await Promise.all(productDetailsPromises);
+
+    res.status(200).json(wishlistDetails);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const addToWishlist = async (req, res) => {
   try {
     const { _id, productId } = req.params;
