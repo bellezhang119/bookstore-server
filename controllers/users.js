@@ -86,6 +86,45 @@ export const updatePassword = async (req, res) => {
   }
 };
 
+export const addWishlistToCart = async (req, res) => {
+  try {
+    const userId = req.params._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    const cartMap = {};
+
+    user.cart.forEach((item) => {
+      cartMap[item.productId] =
+        (cartMap[item.productId] || 0) + item.quantity;
+    });
+
+    user.wishlist.forEach((item) => {
+      cartMap[item.productId] =
+        (cartMap[item.productId] || 0) + item.quantity;
+    });
+
+    const updatedCart = Object.keys(cartMap).map(productId => ({
+      productId,
+      quantity: cartMap[productId]
+    }));
+
+    await User.updateOne(
+      { _id: userId },
+      { $set: { wishlist: [], cart: updatedCart } }
+    );
+
+    const updatedUser = await User.findById(userId);
+
+    res.status(200).json(updatedUser.cart);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
 export const getUserCart = async (req, res) => {
   try {
     const userId = req.params._id;
@@ -109,8 +148,7 @@ export const getUserCart = async (req, res) => {
 
     res.status(200).json(cartDetails);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ msg: err.message });
   }
 };
 
@@ -154,17 +192,16 @@ export const removeFromCart = async (req, res) => {
     }
 
     // Find the cart item and its quantity
-    const cartItem = user.cart.find(item => item.productId.toString() === productId);
+    const cartItem = user.cart.find(
+      (item) => item.productId.toString() === productId
+    );
     if (!cartItem) {
       return res.status(404).json({ message: "Cart item not found" });
     }
 
     if (cartItem.quantity === 1) {
       // Remove the item from the cart if the quantity is 1
-      await User.updateOne(
-        { _id },
-        { $pull: { cart: { productId } } }
-      );
+      await User.updateOne({ _id }, { $pull: { cart: { productId } } });
     } else {
       // Decrement the quantity of the cart item
       await User.updateOne(
@@ -179,7 +216,6 @@ export const removeFromCart = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 export const deleteFromCart = async (req, res) => {
   try {
@@ -225,8 +261,7 @@ export const getUserWishlist = async (req, res) => {
 
     res.status(200).json(wishlistDetails);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ msg: err.message });
   }
 };
 
@@ -265,21 +300,22 @@ export const removeFromWishlist = async (req, res) => {
     // Find the user and check if the product is in the wishlist
     const user = await User.findOne({ _id, "wishlist.productId": productId });
     if (!user) {
-      return res.status(404).json({ message: "User or wishlist item not found" });
+      return res
+        .status(404)
+        .json({ message: "User or wishlist item not found" });
     }
 
     // Find the wishlist item and its quantity
-    const wishlistItem = user.wishlist.find(item => item.productId.toString() === productId);
+    const wishlistItem = user.wishlist.find(
+      (item) => item.productId.toString() === productId
+    );
     if (!wishlistItem) {
       return res.status(404).json({ message: "Wishlist item not found" });
     }
 
     if (wishlistItem.quantity === 1) {
       // Remove the item from the wishlist if the quantity is 1
-      await User.updateOne(
-        { _id },
-        { $pull: { wishlist: { productId } } }
-      );
+      await User.updateOne({ _id }, { $pull: { wishlist: { productId } } });
     } else {
       // Decrement the quantity of the wishlist item
       await User.updateOne(

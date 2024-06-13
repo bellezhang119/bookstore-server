@@ -3,6 +3,7 @@ import {
   getUser,
   getUserOrders,
   updateUser,
+  addWishlistToCart,
   getUserCart,
   addToCart,
   removeFromCart,
@@ -24,6 +25,7 @@ router.get("/:_id/wishlist", verifyToken, getUserWishlist);
 
 // Update
 router.patch("/:_id", verifyToken, updateUser);
+router.patch("/:_id/cart/add/wishlist", verifyToken, addWishlistToCart);
 router.patch("/:_id/cart/add/:productId", verifyToken, addToCart);
 router.patch("/:_id/cart/remove/:productId", verifyToken, removeFromCart);
 router.patch("/:_id/cart/delete/:productId", verifyToken, deleteFromCart);
