@@ -15,6 +15,14 @@ const OrderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        productPrice: {
+          type: Number,
+          required: true,
+        },
+        picturePath: {
+          type: String,
+          default: "",
+        },
       },
     ],
     orderDate: {
@@ -49,9 +57,9 @@ OrderSchema.pre("save", async function (next) {
     if (lastOrder) {
       const lastOrderIdNumeric = parseInt(lastOrder._id.slice(2), 10); // Extract numeric part
       const nextOrderIdNumeric = lastOrderIdNumeric + 1;
-      nextOrderId = "nz" + String(nextOrderIdNumeric).padStart(6, "0");
+      nextOrderId = "bk" + String(nextOrderIdNumeric).padStart(6, "0");
     } else {
-      nextOrderId = "nz000001";
+      nextOrderId = "bk000001";
     }
 
     this._id = nextOrderId;

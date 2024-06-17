@@ -1,4 +1,5 @@
 import Order from "../models/Order.js";
+import User from "../models/User.js";
 
 // Create
 export const createOrder = async (req, res) => {
@@ -9,21 +10,14 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ msg: "Missing required fields" });
     }
 
-    const productDetails = await Promise.all(
-      productList.map(async (item) => {
-        const product = await Product.findById(item.productId);
-        return {
-          productId: item.productId,
-          quantity: item.quantity,
-          productPrice: product ? product.productPrice : 0,
-        };
-      })
-    );
+    const user = await User.findById(userId);
 
-    const transactionAmount = productDetails.reduce(
-      (total, item) => total + item.quantity * item.productPrice,
-      0
-    );
+    let transactionAmount = 0;
+    productList.forEach((item) => {
+      const itemPrice = parseFloat(item.productPrice) || 0;
+      const itemQuantity = parseInt(item.quantity) || 0;
+      transactionAmount += itemPrice * itemQuantity;
+    });
 
     const orderData = {
       productList,
@@ -34,6 +28,8 @@ export const createOrder = async (req, res) => {
 
     const order = new Order(orderData);
     await order.save();
+
+    await User.updateOne({ _id: userId }, { $set: { cart: [] } });
 
     res.status(201).json(order);
   } catch (err) {

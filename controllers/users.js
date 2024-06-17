@@ -24,6 +24,7 @@ export const getUserOrders = async (req, res) => {
     }
 
     const userOrders = await Order.find({ userId: user._id });
+    console.log(userOrders);
     res.status(200).json({ userOrders });
   } catch (err) {
     res.status(404).json({ msg: err.message });
@@ -155,8 +156,6 @@ export const getUserCart = async (req, res) => {
 export const addToCart = async (req, res) => {
   try {
     const { _id, productId } = req.params;
-    console.log(_id);
-    console.log(productId);
 
     // Find the user and update the cart
     const updatedUser = await User.findOneAndUpdate(
