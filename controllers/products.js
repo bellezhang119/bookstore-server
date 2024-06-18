@@ -1,6 +1,7 @@
 import Product from "../models/Product.js";
 
 // Read
+// Get product with matching search (name or author name), categories, price range and sort
 export const getProducts = async (req, res) => {
   try {
     const { categories, search, minPrice, maxPrice, sort } = req.query;
@@ -10,6 +11,7 @@ export const getProducts = async (req, res) => {
       query.categoryList = { $in: categories.split(',') };
     }
 
+    // Filter by matching product name and author name
     if (search) {
       query.$or = [
         { productName: { $regex: search, $options: "i" } },
@@ -43,6 +45,7 @@ export const getProducts = async (req, res) => {
   }
 };
 
+// Get product by id
 export const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

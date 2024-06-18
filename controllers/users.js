@@ -4,6 +4,7 @@ import Product from "../models/Product.js";
 import bcrypt from "bcrypt";
 
 // Read
+// Get user by id
 export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params._id);
@@ -16,6 +17,7 @@ export const getUser = async (req, res) => {
   }
 };
 
+// Get orders associated with id
 export const getUserOrders = async (req, res) => {
   try {
     const user = await User.findById(req.params._id);
@@ -24,7 +26,6 @@ export const getUserOrders = async (req, res) => {
     }
 
     const userOrders = await Order.find({ userId: user._id });
-    console.log(userOrders);
     res.status(200).json({ userOrders });
   } catch (err) {
     res.status(404).json({ msg: err.message });
@@ -32,6 +33,7 @@ export const getUserOrders = async (req, res) => {
 };
 
 // Update
+// Update user fields
 export const updateUser = async (req, res) => {
   try {
     const { _id, firstName, lastName, phoneNumber, birthday } = req.body;
@@ -55,6 +57,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
+// Updated password (If current password is correct)
 export const updatePassword = async (req, res) => {
   try {
     const _id = req.params._id;
@@ -64,11 +67,13 @@ export const updatePassword = async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
 
+    // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid password" });
     }
 
+    // Hash new password
     const salt = await bcrypt.genSalt();
     const newPasswordHash = await bcrypt.hash(newPassword, salt);
 
@@ -87,6 +92,7 @@ export const updatePassword = async (req, res) => {
   }
 };
 
+// Append wishlist to cart
 export const addWishlistToCart = async (req, res) => {
   try {
     const userId = req.params._id;
@@ -96,23 +102,29 @@ export const addWishlistToCart = async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
 
+    // Create new cart map
     const cartMap = {};
 
+    // Add all items in current cart to new cart
+    // Append or initiate quantity to 0 before adding quantity if item doesn't exist
     user.cart.forEach((item) => {
-      cartMap[item.productId] =
-        (cartMap[item.productId] || 0) + item.quantity;
+      cartMap[item.productId] = (cartMap[item.productId] || 0) + item.quantity;
     });
 
+    // Add all items in current wishlist to new cart
+    // Append or initiate quantity to 0 before adding quantity if item doesn't exist
     user.wishlist.forEach((item) => {
-      cartMap[item.productId] =
-        (cartMap[item.productId] || 0) + item.quantity;
+      cartMap[item.productId] = (cartMap[item.productId] || 0) + item.quantity;
     });
 
-    const updatedCart = Object.keys(cartMap).map(productId => ({
+    // Convert cart map into cart array
+    const updatedCart = Object.keys(cartMap).map((productId) => ({
       productId,
-      quantity: cartMap[productId]
+      quantity: cartMap[productId],
     }));
 
+    // Find user document by id
+    // Clear wishlist and update cart
     await User.updateOne(
       { _id: userId },
       { $set: { wishlist: [], cart: updatedCart } }
@@ -126,6 +138,7 @@ export const addWishlistToCart = async (req, res) => {
   }
 };
 
+// Get user's cart by id
 export const getUserCart = async (req, res) => {
   try {
     const userId = req.params._id;
@@ -153,11 +166,11 @@ export const getUserCart = async (req, res) => {
   }
 };
 
+// Add item to cart
 export const addToCart = async (req, res) => {
   try {
     const { _id, productId } = req.params;
 
-    // Find the user and update the cart
     const updatedUser = await User.findOneAndUpdate(
       { _id: _id, "cart.productId": productId }, // Find user with given ID and matching cart item
       { $inc: { "cart.$.quantity": 1 } }, // Increment quantity if cart item exists
@@ -180,6 +193,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
+// Remove item from cart, if the quantity is 1, delete item from cart
 export const removeFromCart = async (req, res) => {
   try {
     const { _id, productId } = req.params;
@@ -209,13 +223,14 @@ export const removeFromCart = async (req, res) => {
       );
     }
 
-    const updatedUser = await User.findById(_id); // Get the updated user document
+    const updatedUser = await User.findById(_id);
     res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+// Delete item from cart
 export const deleteFromCart = async (req, res) => {
   try {
     const { _id, productId } = req.params;
@@ -237,6 +252,7 @@ export const deleteFromCart = async (req, res) => {
   }
 };
 
+// Get user wishlist by id
 export const getUserWishlist = async (req, res) => {
   try {
     const userId = req.params._id;
@@ -264,12 +280,12 @@ export const getUserWishlist = async (req, res) => {
   }
 };
 
+// Add item to wishlist
 export const addToWishlist = async (req, res) => {
   try {
     const { _id, productId } = req.params;
     const user = await User.findById(_id);
 
-    // Find the user and update the wishlist
     const updatedUser = await User.findOneAndUpdate(
       { _id: _id, "wishlist.productId": productId }, // Find user with given ID and matching wishlist item
       { $inc: { "wishlist.$.quantity": 1 } }, // Increment quantity if wishlist item exists
@@ -292,6 +308,7 @@ export const addToWishlist = async (req, res) => {
   }
 };
 
+// Remove item from wishlist, is quantity is 1, delete item from wishlist
 export const removeFromWishlist = async (req, res) => {
   try {
     const { _id, productId } = req.params;
@@ -330,6 +347,7 @@ export const removeFromWishlist = async (req, res) => {
   }
 };
 
+// Delete item from wishlist
 export const deleteFromWishlist = async (req, res) => {
   try {
     const { _id, productId } = req.params;

@@ -1,6 +1,7 @@
 import Author from "../models/Author.js";
 
 // Read
+// Get author by author id
 export const getAuthor = async (req, res) => {
   try {
     const author = await Author.findById(req.params.id);

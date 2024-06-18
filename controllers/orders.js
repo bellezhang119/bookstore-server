@@ -2,6 +2,7 @@ import Order from "../models/Order.js";
 import User from "../models/User.js";
 
 // Create
+// Create order from product list and user id
 export const createOrder = async (req, res) => {
   try {
     const { productList, userId } = req.body;
@@ -12,6 +13,7 @@ export const createOrder = async (req, res) => {
 
     const user = await User.findById(userId);
 
+    // Calculate total order amount
     let transactionAmount = 0;
     productList.forEach((item) => {
       const itemPrice = parseFloat(item.productPrice) || 0;
@@ -38,6 +40,7 @@ export const createOrder = async (req, res) => {
 };
 
 // Read
+// Get order by order id
 export const getOrder = async (req, res) => {
   try {
     const order = Order.findById(req.params.id);
@@ -53,6 +56,7 @@ export const getOrder = async (req, res) => {
 };
 
 // Update
+// Updated order status to completed or cancelled
 export const updateOrder = async (req, res) => {
   try {
     const order = Order.findById(req.params.id);
